@@ -1,0 +1,81 @@
+Parameters:
+  ZipBucket:
+    Description: Name of the bucket where the SageMaker workshop file is uploaded
+    Type: String
+    Default: 'ee-assets-prod-us-east-1'
+  ZipKey:
+    Description: Name of the key to workshop ZIP file
+    Type: String
+    Default: 'modules/14407b7f52234d749994de6f871933cd/v1/nn-sm-workshop.zip'
+
+Resources:
+
+  MLOpsRepo:
+    Type: AWS::CodeCommit::Repository
+    Properties:
+      Code:
+        S3:
+          Bucket: !Ref ZipBucket
+          Key: !Ref ZipKey
+      RepositoryDescription: Repository for the ML models/images code
+      RepositoryName: sagemaker-repo
+
+  MLOpsRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement:
+          - 
+            Effect: "Allow"
+            Principal: 
+              Service: 
+                - "sagemaker.amazonaws.com"
+            Action: 
+              - "sts:AssumeRole"
+          - 
+            Effect: "Allow"
+            Principal: 
+              Service: 
+                - "cloudformation.amazonaws.com"
+            Action: 
+              - "sts:AssumeRole"
+          - 
+            Effect: "Allow"
+            Principal: 
+              Service: 
+                - "codepipeline.amazonaws.com"
+            Action: 
+              - "sts:AssumeRole"
+          - 
+            Effect: "Allow"
+            Principal: 
+              Service: 
+                - "codebuild.amazonaws.com"
+            Action: 
+              - "sts:AssumeRole"
+          - 
+            Effect: "Allow"
+            Principal: 
+              Service: 
+                - "lambda.amazonaws.com"
+            Action: 
+              - "sts:AssumeRole"
+          - 
+            Effect: "Allow"
+            Principal: 
+              Service: 
+                - "events.amazonaws.com"
+            Action: 
+              - "sts:AssumeRole"
+      Path: "/"
+      Policies: 
+        - 
+          PolicyName: "Admin"
+          PolicyDocument: 
+            Version: "2012-10-17"
+            Statement: 
+              - 
+                Effect: "Allow"
+                Action: "*"
+                Resource: "*"
