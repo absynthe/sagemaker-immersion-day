@@ -1,5 +1,3 @@
-AWSTemplateFormatVersion: "2010-09-09"
-Description: A sample template
 Parameters:
   ZipBucket:
     Description: Name of the bucket where the SageMaker workshop file is uploaded
