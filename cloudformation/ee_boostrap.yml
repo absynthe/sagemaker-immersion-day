@@ -19,7 +19,7 @@ Resources:
             Statement:
               - 
                 Effect: Allow
-                Action: 
+                Action:
                   - s3:GetObject
                   - s3:PutObject
                   - s3:DeleteObject
@@ -31,10 +31,10 @@ Resources:
             Statement:
               - 
                 Effect: Allow
-                Action: 
+                Action:
                   - iam:GetRole
                   - iam:GetRolePolicy
-                Resource: *                         
+                Resource: '*'
       AssumeRolePolicyDocument: 
         Version: 2012-10-17
         Statement:
