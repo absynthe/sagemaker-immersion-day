@@ -27,6 +27,16 @@ Resources:
                   - s3:DeleteObject
                   - s3:ListBucket
                 Resource: arn:aws:s3:::*
+        - PolicyName: iam-access
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - 
+                Effect: Allow
+                Action: 
+                  - iam:GetRole
+                  - iam:GetRolePolicy
+                Resource: *                      
       AssumeRolePolicyDocument: 
         Version: 2012-10-17
         Statement:
