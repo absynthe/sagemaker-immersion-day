@@ -8,7 +8,7 @@ Parameters:
   ZipKey:
     Description: Name of the key to workshop ZIP file
     Type: String
-    Default: 'modules/14407b7f52234d749994de6f871933cd/v1/nn-sm-id.zip'
+    Default: 'modules/14407b7f52234d749994de6f871933cd/v1/sm-id.zip'
 
 Resources:
   SageMakerExecutionRole:
