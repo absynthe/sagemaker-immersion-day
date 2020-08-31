@@ -61,6 +61,17 @@ Resources:
       RepositoryDescription: Repository for the ML models/images code
       RepositoryName: sagemaker-immersion-day-repository
 
+  SageMakerImmersionDayNotebook: 
+    Type: AWS::SageMaker::NotebookInstance
+    Properties: 
+      DefaultCodeRepository: !GetAtt SageMakerImmersionDayRepository.CloneUrlHttp
+      DirectInternetAccess: Enabled
+      InstanceType: ml.t3.medium
+      NotebookInstanceName: sagemaker-immersion-day
+      RoleArn: !GetAtt SageMakerExecutionRole.Arn
+      RootAccess: Enabled
+      VolumeSizeInGB: 5      
+
   MLOpsRole:
     Type: "AWS::IAM::Role"
     Properties:
