@@ -1,0 +1,86 @@
+Description: Create a CodePipeline for a Machine Learning Model
+Parameters:
+  ModelName:
+    Type: String
+    Description: Name of the model
+    Default: sagemaker-decision-trees
+  BuildspecPath:
+    Type: String
+    Description: Path of the buildspec to build the docker container
+    Default: mlops/docker_buildspec.yml
+
+
+Resources:
+  CodePipelineArtifactBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: BucketOwnerFullControl
+      VersioningConfiguration: 
+        Status: Enabled
+      BucketName: !Sub mlops-codepipeline-${AWS::AccountId}
+
+  DeployPipeline:
+    Type: "AWS::CodePipeline::Pipeline"
+    Properties:
+      Name: !Sub ${AWS::StackName}
+      RoleArn: !ImportValue MLOpsRole
+      ArtifactStore:
+          Type: S3
+          Location: !Ref CodePipelineArtifactBucket
+      Stages:
+        - 
+          Name: Source
+          Actions:
+          -
+            Name: Code
+            ActionTypeId: 
+              Category: Source
+              Owner: AWS
+              Version: 1
+              Provider: CodeCommit
+            OutputArtifacts: 
+              - Name: SourceArtifact
+            Configuration: 
+              RepositoryName: !ImportValue SageMakerImmersionDayRepository
+              BranchName: master
+            RunOrder: 1
+        - 
+          Name: Build
+          Actions:
+            - Name: DockerBuild
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: 1
+              Configuration:
+                ProjectName: !Ref CodeBuildProject
+              InputArtifacts:
+              - Name: SourceArtifact
+              OutputArtifacts:
+              - Name: BuildOutput
+              RunOrder: 1
+
+  CodeBuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Artifacts:
+        Packaging: zip
+        Type: codepipeline
+      Description: Codebuild example project
+      Environment:
+        ComputeType: small
+        EnvironmentVariables:
+        - Name: IMAGE_REPO_NAME
+          Value: sagemaker-decision-trees
+        - Name: AWS_ACCOUNT_ID
+          Value: !Ref "AWS::AccountId"
+        - Name: AWS_DEFAULT_REGION
+          Value: !Ref "AWS::Region"
+        Image: aws/codebuild/amazonlinux2-x86_64-standard:3.0
+        PrivilegedMode: true
+        Type: LINUX_CONTAINER
+      ServiceRole: !ImportValue MLOpsRole
+      Source:
+        Type: codepipeline
+        BuildSpec: !Ref BuildspecPath

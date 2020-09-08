@@ -1,0 +1,59 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: A sample template
+Parameters:
+  S3DataBucket:
+    Type: String
+  S3DataKey:
+    Type: String
+  TrainingStepFunctionName:
+    Type: String
+Resources:  
+  CodePipelineArtifactBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: BucketOwnerFullControl
+      VersioningConfiguration: 
+        Status: Enabled
+      BucketName: !Sub mlops-codepipeline-train-${AWS::AccountId}
+
+  CodePipeline:
+    Type: AWS::CodePipeline::Pipeline
+    Properties: 
+      RoleArn: !ImportValue MLOpsRole
+      Name: !Sub ${AWS::StackName}
+      ArtifactStore:
+        Location: !Ref CodePipelineArtifactBucket
+        Type: S3
+      Stages: 
+        - 
+          Name: Source
+          Actions: 
+            - 
+              Name: Data
+              ActionTypeId: 
+                Category: Source
+                Owner: AWS
+                Version: 1
+                Provider: S3
+              OutputArtifacts: 
+                - Name: SourceArtifact
+              Configuration: 
+                S3Bucket: !Ref S3DataBucket
+                S3ObjectKey: !Ref S3DataKey
+              RunOrder: 1
+        -
+          Name: StartTraining
+          Actions:
+            -
+              Name: StartStepFunctions
+              InputArtifacts:
+                - Name: SourceArtifact
+              ActionTypeId:
+                Category: Invoke
+                Owner: AWS
+                Provider: StepFunctions
+                Version: 1
+              Configuration:
+                StateMachineArn: !Sub 'arn:aws:states:${AWS::Region}:${AWS::AccountId}:stateMachine:${TrainingStepFunctionName}'
+                InputType: FilePath
+                Input: config.json
