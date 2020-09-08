@@ -131,3 +131,14 @@ Resources:
                 Effect: "Allow"
                 Action: "*"
                 Resource: "*"
+Outputs:
+  MLOpsRole:
+    Description: MLOPsRole
+    Value: !GetAtt MLOpsRole.Arn
+    Export:
+      Name: MLOpsRole
+  SageMakerImmersionDayRepository:
+    Description: SageMakerImmersionDayRepository
+    Value: !GetAtt SageMakerImmersionDayRepository.Name
+    Export:
+      Name: SageMakerImmersionDayRepository
