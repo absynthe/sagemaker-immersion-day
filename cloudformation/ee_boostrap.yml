@@ -47,7 +47,9 @@ Resources:
               - sts:AssumeRole                
       ManagedPolicyArns:
         - 'arn:aws:iam::aws:policy/AmazonSageMakerFullAccess'
-        - 'arn:aws:iam::aws:policy/AmazonS3FullAccess'             
+        - 'arn:aws:iam::aws:policy/AmazonS3FullAccess'
+        - 'arn:aws:iam::aws:policy/AWSCloudFormationFullAccess'
+        - 'arn:aws:iam::aws:policy/AWSCodePipeline_FullAccess'
 
   SageMakerImmersionDayRepository:
     Type: AWS::CodeCommit::Repository
