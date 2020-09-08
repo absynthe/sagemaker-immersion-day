@@ -6,6 +6,7 @@ FROM ubuntu:16.04
 
 MAINTAINER Amazon AI <sage-learner@amazon.com>
 
+RUN mkdir -p /opt/ml/input/data/training
 
 RUN apt-get -y update && apt-get install -y --no-install-recommends \
          wget \
