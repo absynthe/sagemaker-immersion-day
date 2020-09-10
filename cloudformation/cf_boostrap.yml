@@ -8,7 +8,7 @@ Parameters:
   ZipKey:
     Description: Name of the key to workshop ZIP file
     Type: String
-    Default: 'modules/14407b7f52234d749994de6f871933cd/v1/sm-id.zip'
+    Default: 'modules/14407b7f52234d749994de6f871933cd/v2/sm-id.zip'
 
 Resources:
   SageMakerExecutionRole:
@@ -49,7 +49,9 @@ Resources:
               - sts:AssumeRole                
       ManagedPolicyArns:
         - 'arn:aws:iam::aws:policy/AmazonSageMakerFullAccess'
-        - 'arn:aws:iam::aws:policy/AmazonS3FullAccess'             
+        - 'arn:aws:iam::aws:policy/AmazonS3FullAccess'
+        - 'arn:aws:iam::aws:policy/AWSCloudFormationFullAccess'
+        - 'arn:aws:iam::aws:policy/AWSCodePipeline_FullAccess'
 
   SageMakerImmersionDayRepository:
     Type: AWS::CodeCommit::Repository
@@ -131,3 +133,15 @@ Resources:
                 Effect: "Allow"
                 Action: "*"
                 Resource: "*"
+
+Outputs:
+  MLOpsRole:
+    Description: MLOPsRole
+    Value: !GetAtt MLOpsRole.Arn
+    Export:
+      Name: MLOpsRole
+  SageMakerImmersionDayRepository:
+    Description: SageMakerImmersionDayRepository
+    Value: !GetAtt SageMakerImmersionDayRepository.Name
+    Export:
+      Name: SageMakerImmersionDayRepository
